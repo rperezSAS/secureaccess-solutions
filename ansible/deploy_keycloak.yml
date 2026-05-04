@@ -1,0 +1,33 @@
+---
+- name: Despliegue de Keycloak para SecureAccess Solutions
+  hosts: servidores_seguros
+  become: yes
+  tasks:
+    - name: Instalar paquetes necesarios para Docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: yes
+
+    - name: Crear carpeta para el proyecto en el servidor
+      file:
+        path: /opt/keycloak_asir
+        state: directory
+        mode: 0755
+
+    - name: Copiar los archivos de Docker desde mi portatil al servidor
+      copy:
+        src: ../docker/
+        dest: /opt/keycloak_asir/
+        mode: 0644
+
+    - name: Levantar los contenedores de Keycloak y Postgres
+      command: docker compose up -d
+      args:
+        chdir: /opt/keycloak_asir

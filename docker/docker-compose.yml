@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak_network
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: keycloak_server
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: IP_SERVER
+      KC_HOSTNAME_STRICT: "false"
+      #KC_PROXY: edge # Descomentar cuando usemos Nginx
+    command: start-dev # Modo desarrollo para entorno local sin SSL
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - keycloak_network
+    restart: unless-stopped
+
+networks:
+  keycloak_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
