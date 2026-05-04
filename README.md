@@ -9,7 +9,7 @@ El proyecto establece a **Keycloak** como Proveedor de Identidad (IdP), respalda
 El código está dividido en dos módulos principales: la configuración de automatización (Ansible) y la configuración de contenedores (Docker).
 
 ```text
-proyectoASIR/
+secureaccess-solutions/
 ├── README.md                 # Este archivo de documentación técnica.
 ├── ansible/
 │   ├── deploy_keycloak.yml   # Playbook principal de Ansible. Tareas que realiza:
